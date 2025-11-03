@@ -28,20 +28,15 @@ def home():
 def predict_message(msg: Message):
     cleaned = clean_text(msg.text)
 
-    # ⚠️ Bắt từ tục tĩu nghiêm trọng
+    # ⚠️ Nếu có từ cấm thì trả về 'toxic'
     banned_words = ["lồn", "cặc"]
     if any(bad in cleaned for bad in banned_words):
-        return {
-            "text": msg.text,
-            "prediction": "strong_toxic",
-            "matched_word": [bad for bad in banned_words if bad in cleaned],
-            "note": "Phát hiện từ ngữ tục tĩu nghiêm trọng"
-        }
+        return {"text": msg.text, "prediction": "toxic"}
 
     # Nếu không có từ bị cấm thì xử lý bằng model
     X = vectorizer.transform([cleaned])
     pred = model.predict(X)[0]
-
     return {"text": msg.text, "prediction": pred}
+
 
 
